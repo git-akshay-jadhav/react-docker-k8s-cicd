@@ -1,37 +1,129 @@
-# Getting Started with 2048
+# 2048 React CI/CD Deployment
 
-This game (2048) was built using **React** and **TypeScript**. The unique part of this example is animations. The animations in React aren't that straightforward, so I hope you can learn something new from it.
+Hands-on DevOps project for containerizing a React/TypeScript 2048 game and deploying it with Docker and Kubernetes.
 
-**Wondering how was that built?** You can find a video tutorial on [my YouTube Channel](https://www.youtube.com/channel/UCJV16_5c4A0amyBZSI4yP6A)
+## Project Overview
 
-## How To Play?
+This repository uses a React application as the sample workload for practicing DevOps deployment flow. The main focus is not the game logic itself, but the steps required to package, run, and deploy a frontend application using container and Kubernetes concepts.
 
-You can play 2048 on [Github pages](https://mateuszsokola.github.io/2048-in-react/)
+## Tech Stack
 
-## Available Scripts
+| Area | Tools |
+|---|---|
+| Frontend | React, TypeScript |
+| Styling | LESS |
+| Build Tooling | CRACO, React Scripts |
+| Containerization | Docker |
+| Orchestration | Kubernetes |
+| Deployment Object | Deployment, Service |
 
-In the project directory, you can run:
+## Repository Structure
 
-### `yarn start`
+| Path | Purpose |
+|---|---|
+| `src/` | React application source code |
+| `public/` | Static public assets |
+| `Dockerfile` | Docker image build definition |
+| `deployment.yaml` | Kubernetes Deployment and Service |
+| `package.json` | Application scripts and dependencies |
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Deployment Flow
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```text
+Developer
+   |
+   v
+React Application
+   |
+   v
+Docker Build
+   |
+   v
+Container Image
+   |
+   v
+Kubernetes Deployment
+   |
+   v
+LoadBalancer Service
+```
 
-### `yarn build`
+## Run Locally
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Install dependencies:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+npm install
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Start the app:
 
-## Learn More
+```bash
+npm start
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Build the production bundle:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+npm run build
+```
+
+## Build and Run With Docker
+
+Build the Docker image:
+
+```bash
+docker build -t 2048-react-cicd .
+```
+
+Run the container:
+
+```bash
+docker run -p 3000:3000 2048-react-cicd
+```
+
+## Deploy to Kubernetes
+
+Before applying the manifest, update the image in `deployment.yaml`:
+
+```yaml
+image: <dockerhub-username>/2048-react-cicd:latest
+```
+
+Apply the manifest:
+
+```bash
+kubectl apply -f deployment.yaml
+```
+
+Validate resources:
+
+```bash
+kubectl get deployments
+kubectl get pods
+kubectl get svc
+kubectl describe pod <pod-name>
+kubectl logs <pod-name>
+```
+
+## Interview Talking Points
+
+- How a frontend app is packaged into a Docker image
+- Difference between local app run and containerized app run
+- Why Kubernetes Deployment uses labels and selectors
+- How Kubernetes Service exposes application pods
+- Difference between `ClusterIP`, `NodePort`, and `LoadBalancer`
+- What to check when the pod is running but the app is not reachable
+
+## Troubleshooting Checklist
+
+- Confirm the Docker image builds successfully.
+- Verify the container listens on the expected port.
+- Check image name and tag inside `deployment.yaml`.
+- Use `kubectl describe pod` for scheduling or image pull errors.
+- Use `kubectl logs` for runtime errors.
+- Confirm Service selector matches pod labels.
+
+## Learning Outcome
+
+This project is useful for explaining a basic CI/CD and Kubernetes deployment path using a simple React application. It is a good beginner-friendly repo to discuss Docker, Kubernetes manifests, service exposure, and deployment validation.
